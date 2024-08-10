@@ -50,6 +50,7 @@ dependencies {
 
     //region Dagger
     implementation("com.google.dagger:dagger:2.51.1")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.6.8")
     kapt("com.google.dagger:dagger-compiler:2.51.1")
     //endregion
 

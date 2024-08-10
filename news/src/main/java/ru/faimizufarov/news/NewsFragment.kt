@@ -1,6 +1,5 @@
 package ru.faimizufarov.news
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,9 +9,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import ru.faimizufarov.core.theme.HelpTheme
 import ru.faimizufarov.domain.models.News
 import ru.faimizufarov.news.databinding.FragmentNewsComposeBinding
@@ -22,16 +18,10 @@ import javax.inject.Inject
 
 class NewsFragment : Fragment() {
     private lateinit var binding: FragmentNewsComposeBinding
-    private var newsNavigator: NewsNavigator? = null
 
     @Inject
     lateinit var newsViewModelFactory: NewsViewModelFactory
     private lateinit var newsViewModel: NewsViewModel
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is NewsNavigator) newsNavigator = context
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,45 +64,21 @@ class NewsFragment : Fragment() {
     }
 
     private fun openFilterFragment() {
-        newsNavigator?.navigateToFilterFragment()
+        TODO("Implement navigation to FilterFragment")
     }
 
     private fun updateFeed(news: News) {
         newsViewModel.emitReadNewsIds(news)
 
-        val startDate =
-            Instant.fromEpochMilliseconds(news.startDate)
-                .toLocalDateTime(TimeZone.currentSystemDefault()).toString()
-        val finishDate =
-            Instant.fromEpochMilliseconds(news.finishDate)
-                .toLocalDateTime(TimeZone.currentSystemDefault()).toString()
+        val bundle = bundleOf(NEWS_ID to news.id)
+        setFragmentResult(NEWS_ID_RESULT, bundle)
 
-        val bundle =
-            bundleOf(
-                IMAGES_VIEW_NEWS to news.newsImages,
-                TEXT_VIEW_NAME to news.nameText,
-                TEXT_VIEW_DESCRIPTION to news.descriptionText,
-                START_DATE to startDate,
-                FINISH_DATE to finishDate,
-            )
-
-        setFragmentResult(NEWS_POSITION_RESULT, bundle)
-
-        newsNavigator?.navigateToDetailDescriptionFragment()
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        newsNavigator = null
+        TODO("Implement navigation to DetailDescriptionFragment")
     }
 
     companion object {
-        const val IMAGES_VIEW_NEWS = "IMAGES_VIEW_NEWS"
-        const val TEXT_VIEW_NAME = "TEXT_VIEW_NAME"
-        const val TEXT_VIEW_DESCRIPTION = "TEXT_VIEW_DESCRIPTION"
-        const val START_DATE = "START_DATE"
-        const val FINISH_DATE = "FINISH_DATE"
-        const val NEWS_POSITION_RESULT = "NEWS_POSITION_RESULT"
+        const val NEWS_ID = "NEWS_ID"
+        const val NEWS_ID_RESULT = "NEWS_ID_RESULT"
 
         fun newInstance() = NewsFragment()
     }
