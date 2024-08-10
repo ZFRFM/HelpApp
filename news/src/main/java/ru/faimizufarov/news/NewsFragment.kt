@@ -46,7 +46,7 @@ class NewsFragment : Fragment() {
             setContent {
                 HelpTheme {
                     NewsScreen(
-                        clickFilter = { openFilterFragment() },
+                        clickFilter = { navigateToNewsFilterFragment() },
                         clickItem = { updateFeed(it.toNews()) },
                     )
                 }
@@ -63,22 +63,46 @@ class NewsFragment : Fragment() {
         newsViewModel.collectReadNewsIds()
     }
 
-    private fun openFilterFragment() {
-        TODO("Implement navigation to FilterFragment")
-    }
-
     private fun updateFeed(news: News) {
         newsViewModel.emitReadNewsIds(news)
 
-        val bundle = bundleOf(NEWS_ID to news.id)
-        setFragmentResult(NEWS_ID_RESULT, bundle)
+        val newsIdBundle = bundleOf(NEWS_ID to news.id)
+        setFragmentResult(NEWS_ID_RESULT, newsIdBundle)
 
-        TODO("Implement navigation to DetailDescriptionFragment")
+        navigateToDetailDescriptionFragment()
+    }
+
+    private fun navigateToNewsFilterFragment() {
+        val navigateToNewsFilterFragmentBundle =
+            bundleOf(NAVIGATE_TO_FILTER_FRAGMENT to true)
+        setFragmentResult(
+            NAVIGATE_TO_FILTER_FRAGMENT_RESULT,
+            navigateToNewsFilterFragmentBundle,
+        )
+    }
+
+    private fun navigateToDetailDescriptionFragment() {
+        val navigateToDetailDestinationFragmentBundle =
+            bundleOf(NAVIGATE_TO_DETAIL_DESTINATION_FRAGMENT to true)
+        setFragmentResult(
+            NAVIGATE_TO_DETAIL_DESTINATION_FRAGMENT_RESULT,
+            navigateToDetailDestinationFragmentBundle,
+        )
     }
 
     companion object {
         const val NEWS_ID = "NEWS_ID"
         const val NEWS_ID_RESULT = "NEWS_ID_RESULT"
+
+        const val NAVIGATE_TO_FILTER_FRAGMENT =
+            "NAVIGATE_TO_FILTER_FRAGMENT"
+        const val NAVIGATE_TO_FILTER_FRAGMENT_RESULT =
+            "NAVIGATE_TO_FILTER_FRAGMENT_RESULT"
+
+        const val NAVIGATE_TO_DETAIL_DESTINATION_FRAGMENT =
+            "NAVIGATE_TO_DETAIL_DESTINATION_FRAGMENT"
+        const val NAVIGATE_TO_DETAIL_DESTINATION_FRAGMENT_RESULT =
+            "NAVIGATE_TO_DETAIL_DESTINATION_FRAGMENT_RESULT"
 
         fun newInstance() = NewsFragment()
     }
