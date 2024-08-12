@@ -6,8 +6,9 @@ import dagger.Provides
 import ru.faimizufarov.domain.repository.NewsRepository
 import ru.faimizufarov.domain.usecase.GetNewsUseCase
 import ru.faimizufarov.domain.usecase.SetBadgeCounterEmitValueUseCase
-import ru.faimizufarov.simbirtraining.java.presentation.ui.holders.GlobalNewsFilter
-import ru.faimizufarov.simbirtraining.java.presentation.ui.screens.news.NewsViewModelFactory
+import ru.faimizufarov.news.NewsViewModelFactory
+import ru.faimizufarov.news.holders.GlobalNewsFilter
+import ru.faimizufarov.simbirtraining.java.presentation.ui.screens.detail_description.DetailDescriptionViewModelFactory
 import javax.inject.Singleton
 
 @Module
@@ -28,4 +29,10 @@ class AppModule(val context: Context) {
         newsFilter,
         newsRepository,
     )
+
+    @Provides
+    fun provideDetailDescriptionViewModelFactory(newsRepository: NewsRepository) =
+        DetailDescriptionViewModelFactory(
+            newsRepository = newsRepository,
+        )
 }

@@ -7,16 +7,38 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
+import ru.faimizufarov.news.NewsFragment
 import ru.faimizufarov.simbirtraining.R
 import ru.faimizufarov.simbirtraining.databinding.FragmentDetailDescriptionBinding
+import ru.faimizufarov.simbirtraining.java.App
+import javax.inject.Inject
 
 class DetailDescriptionFragment : Fragment() {
     private lateinit var binding: FragmentDetailDescriptionBinding
+
+    @Inject
+    lateinit var detailDescriptionViewModelFactory: DetailDescriptionViewModelFactory
+    private lateinit var detailDescriptionViewModel: DetailDescriptionViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        (requireActivity().applicationContext as App)
+            .appComponent
+            .injectDetailDescriptionFragment(this)
+        detailDescriptionViewModel =
+            ViewModelProvider(
+                this,
+                detailDescriptionViewModelFactory,
+            )[DetailDescriptionViewModel::class]
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,21 +57,27 @@ class DetailDescriptionFragment : Fragment() {
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        setFragmentResultListener(NEWS_POSITION_RESULT) { _, bundle ->
+        setFragmentResultListener(NewsFragment.NEWS_ID_RESULT) { _, bundle ->
+            val newsId =
+                bundle.getString(NewsFragment.NEWS_ID)
+                    ?: error("NewsID from setFragmentResultListener() is null")
 
-            val startDate = LocalDateTime.parse(bundle.getString(START_DATE) ?: "")
-            val finishDate = LocalDateTime.parse(bundle.getString(FINISH_DATE) ?: "")
+            detailDescriptionViewModel.getNewsDetailDescription(newsId)
+        }
 
-            val finishDay =
-                LocalDateTime.parse(
-                    bundle.getString(FINISH_DATE) ?: "",
-                ).date.toEpochDays()
+        detailDescriptionViewModel.newsData.observe(viewLifecycleOwner) { news ->
+
+            val startDate = convertToLocalDateTime(news.startDate)
+
+            val finishDate = convertToLocalDateTime(news.finishDate)
+
+            val finishDay = convertToLocalDateTime(news.finishDate).date.toEpochDays()
 
             val today = Clock.System.todayIn(TimeZone.currentSystemDefault()).toEpochDays()
 
             with(binding.contentDetailDescription) {
-                val imageUrlList = bundle.getStringArrayList(IMAGES_VIEW_NEWS)
-                val imageUrl = imageUrlList?.first().toString()
+                val imageUrlList = news.newsImages
+                val imageUrl = imageUrlList.first().toString()
 
                 if (!imageUrl.startsWith("images/news")) {
                     Glide
@@ -63,9 +91,8 @@ class DetailDescriptionFragment : Fragment() {
                         .into(binding.contentDetailDescription.imageViewFirstPicture)
                 }
 
-                textViewNews.text = bundle.getString(TEXT_VIEW_NAME)
-
-                textViewDescTop.text = bundle.getString(TEXT_VIEW_DESCRIPTION)
+                textViewNews.text = news.nameText
+                textViewDescTop.text = news.descriptionText
 
                 textViewRemainingTime.text =
                     if (finishDay - today >= 0) {
@@ -88,14 +115,15 @@ class DetailDescriptionFragment : Fragment() {
         }
     }
 
-    companion object {
-        const val IMAGES_VIEW_NEWS = "IMAGES_VIEW_NEWS"
-        const val TEXT_VIEW_NAME = "TEXT_VIEW_NAME"
-        const val TEXT_VIEW_DESCRIPTION = "TEXT_VIEW_DESCRIPTION"
-        const val START_DATE = "START_DATE"
-        const val FINISH_DATE = "FINISH_DATE"
-        const val NEWS_POSITION_RESULT = "NEWS_POSITION_RESULT"
+    private fun convertToLocalDateTime(milliseconds: Long) =
+        LocalDateTime
+            .parse(
+                Instant.fromEpochMilliseconds(milliseconds)
+                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                    .toString(),
+            )
 
+    companion object {
         fun newInstance(): DetailDescriptionFragment {
             return DetailDescriptionFragment()
         }
