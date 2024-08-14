@@ -1,6 +1,6 @@
 package ru.faimizufarov.authorization
 
-import android.content.Intent
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -23,7 +23,7 @@ class AuthorizationActivity : AppCompatActivity() {
         }
         with(authorizationViewModel) {
             navigateToMainLiveEvent.observe(this@AuthorizationActivity) {
-                navigateToMainActivityLocal()
+                setResultToMainActivity()
             }
 
             finishAuthorizationLiveEvent.observe(this@AuthorizationActivity) {
@@ -32,12 +32,8 @@ class AuthorizationActivity : AppCompatActivity() {
         }
     }
 
-    private fun navigateToMainActivityLocal() {
-        val intent =
-            Intent(
-                "ru.faimizufarov.simbirtraining.java.presentation.ui.screens.main.MainActivity",
-            )
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
+    private fun setResultToMainActivity() {
+        setResult(Activity.RESULT_OK)
+        finish()
     }
 }

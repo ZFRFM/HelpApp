@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
-import ru.faimizufarov.authorization.AuthorizationActivity
 import ru.faimizufarov.simbirtraining.R
 
 class SplashActivity : AppCompatActivity() {
@@ -12,7 +11,7 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
         Handler().postDelayed({
-            startActivity(Intent(this, AuthorizationActivity::class.java))
+            startActivity(Intent(this, StartNavigationActivity::class.java))
             finish()
         }, 1000)
     }

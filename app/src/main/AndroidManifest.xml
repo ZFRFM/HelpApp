@@ -11,17 +11,20 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:allowBackup="true"
         android:name=".java.App"
+        android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/launch_icon"
         android:label="@string/app_name"
         android:roundIcon="@drawable/launch_icon"
-        android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.SimbirSoftPractice"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".java.presentation.ui.activities.StartNavigationActivity"
+            android:exported="false" />
 
         <service
             android:name=".java.presentation.services.CategoryLoaderService"
@@ -47,6 +50,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
                 <action android:name="ru.faimizufarov.simbirtraining.java.presentation.ui.screens.main.MainActivity" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
