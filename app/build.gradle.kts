@@ -59,10 +59,12 @@ dependencies {
     implementation(project(path = ":domain"))
     implementation(project(path = ":data"))
     implementation(project(path = ":news"))
+    implementation(project(path = ":authorization"))
     implementation(project(path = ":core"))
 
     implementation("androidx.activity:activity-ktx:1.9.1")
     implementation("androidx.compose.runtime:runtime-livedata:1.6.8")
+    implementation("androidx.activity:activity:1.8.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
